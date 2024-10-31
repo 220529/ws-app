@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Client</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      #messages {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 200px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      input[type="text"] {
+        width: 80%;
+        padding: 5px;
+      }
+      button {
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket Chat</h1>
+    <div id="messages"></div>
+    <input id="message" type="text" placeholder="Type a message" />
+    <button id="send">Send</button>
+
+    <script>
+      const socket = new WebSocket("ws://localhost:8080");
+
+      socket.onopen = () => {
+        console.log("Connected to server");
+      };
+
+      socket.onmessage = (event) => {
+        const messagesDiv = document.getElementById("messages");
+
+        if (event.data instanceof Blob) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            messagesDiv.innerHTML += `<div>${reader.result}</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          };
+          reader.readAsText(event.data);
+        } else {
+          messagesDiv.innerHTML += `<div>${event.data}</div>`;
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket error: ", error);
+      };
+
+      socket.onclose = () => {
+        console.log("Connection closed");
+      };
+
+      document.getElementById("send").onclick = () => {
+        const messageInput = document.getElementById("message");
+        const message = messageInput.value;
+
+        if (message) {
+          socket.send(message);
+          messageInput.value = "";
+        }
+      };
+
+      document
+        .getElementById("message")
+        .addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            document.getElementById("send").click();
+          }
+        });
+    </script>
+  </body>
+</html>
