@@ -4,7 +4,7 @@ const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 
 const app = express();
-const port = 7080;
+const port = 8080;
 
 // 提供静态文件
 app.use(express.static(__dirname));
