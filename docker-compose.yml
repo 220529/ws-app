@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  node-app:
+    build:
+      context: ./
+    ports:
+      - 7100:7100 # Node.js 应用的端口，暴露给外部
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "5050:80" # Nginx 端口映射
+    volumes:
+      - ./template:/var/www/html
+      - ./conf.d:/etc/nginx/conf.d
+    depends_on:
+      - node-app # 确保 node-app 启动后再启动 nginx

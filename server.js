@@ -1,21 +1,13 @@
-// server.js
-const express = require("express");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 
-const app = express();
-const port = 8080;
-
-// 提供静态文件
-app.use(express.static(__dirname));
-
-// 启动 HTTP 服务器
-const server = app.listen(port, () => {
-  console.log(`HTTP server is running on http://localhost:${port}`);
-});
+// 端口号
+const port = 7100;
 
 // 创建 WebSocket 服务器
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ port }, () => {
+  console.log(`WebSocket server is running on ws://localhost:${port}`);
+});
 
 wss.on("connection", (ws) => {
   const clientId = uuidv4();
